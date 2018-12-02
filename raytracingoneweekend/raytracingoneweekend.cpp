@@ -4,9 +4,14 @@
 #include "pch.h"
 #include <iostream>
 
+#include "ppm.h"
+
 int main()
 {
     std::cout << "Hello World!\n"; 
+
+	std::string file("sample.ppm");
+	rt::writeRandomPPM(file, 640, 480);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
