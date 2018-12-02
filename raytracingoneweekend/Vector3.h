@@ -4,6 +4,10 @@
 
 namespace rt
 {
+
+	template <typename T> class Vector3;
+	template <typename T> std::ostream& operator<<(std::ostream&, const Vector3<T>&);
+
 	template<typename T>
 	class Vector3 
 	{
@@ -14,6 +18,8 @@ namespace rt
 		Vector3(T aX, T aY, T aZ)
 			: m_e{ aX, aY, aZ } {}
 		
+		friend std::ostream& operator<< <T>(std::ostream& iStream, Vector3<T>& input);
+
 		static Vector3 forward() { return Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
 		static Vector3 right() { return Vector3(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
 		static Vector3 up() { return Vector3(static_cast<T>(0), static_cast<T>(1), static_cast<T>(0)); }
@@ -37,11 +43,60 @@ namespace rt
 		inline const Vector3& operator+() const { return *this; }
 		inline Vector3 operator-() { return Vector3(-this->m_e[0], -this->m_e[1], -this->m_e[2]); }
 
+		inline const T& operator[](int aIndex) const { return m_e[aIndex]; }
+		inline T& operator[](int aIndex) { return m_e[aIndex]; }
+
+		inline Vector3& operator+=(const Vector3& aRHS) {
+			this->m_e[0] += aRHS.m_e[0];
+			this->m_e[1] += aRHS.m_e[1];
+			this->m_e[2] += aRHS.m_e[2];
+
+			return *this;
+		}
+
+		inline Vector3& operator-=(const Vector3& aRHS) {
+			this->m_e[0] -= aRHS.m_e[0];
+			this->m_e[1] -= aRHS.m_e[1];
+			this->m_e[2] -= aRHS.m_e[2];
+
+			return *this;
+		}
+		
+		// TODO listed in the book as the header. But does not make sense as Vector multiplication is defined as scaler multiplication
+		/*inline Vector3& operator*=(const Vector3& aRHS) {
+			this->m_e[0] *= aRHS.m_e[0];
+			this->m_e[1] *= aRHS.m_e[1];
+			this->m_e[2] *= aRHS.m_e[2];
+
+			return *this;
+		}*/
+
+		inline Vector3& operator*=(const T& aRHS) {
+			this->m_e[0] = this->m_e[0] * aRHS;
+			this->m_e[1] = this->m_e[1] * aRHS;
+			this->m_e[2] = this->m_e[2] * aRHS;
+
+			return *this;
+		}
+
+		inline Vector3& operator/=(const T& aRHS) {
+			this->m_e[0] = this->m_e[0] / aRHS;
+			this->m_e[1] = this->m_e[1] / aRHS;
+			this->m_e[2] = this->m_e[2] / aRHS;
+
+			return *this;
+		}
 
 
 	private:
 		T m_e[3];
 
-
 	};
+	
+	template<typename T>
+	std::ostream& operator<<(std::istream & iStream, const Vector3<T>& input)
+	{
+
+	}
+
 }
