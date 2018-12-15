@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="pch.h" />
     <ClInclude Include="ppm.h" />
+    <ClInclude Include="ray.h" />
     <ClInclude Include="Vector3.h" />
   </ItemGroup>
   <ItemGroup>

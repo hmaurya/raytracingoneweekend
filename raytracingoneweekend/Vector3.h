@@ -87,6 +87,14 @@ namespace rt
 			return *this;
 		}
 
+		inline Vector3& operator*(float value) {
+
+			this->m_e[0] = this->m_e[0] * value;
+			this->m_e[1] = this->m_e[1] * value;
+			this->m_e[2] = this->m_e[2] * value;
+
+			return *this;
+		}
 
 	private:
 		T m_e[3];
