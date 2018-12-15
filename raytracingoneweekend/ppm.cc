@@ -10,12 +10,14 @@ void rt::writeRandomPPM(const std::string& aFilepath, const int aWidth, const in
 {
 	// TODO get a simple logger from github
 	
-	Vector3f vec{ 2.123f, 3.0f, 4.0f };
+	Vector3f origin{ 2.123f, 3.0f, 4.0f };
+	Vector3f direction{ 1.0, 0.0f, 0.0f };
 	Vector3<int> veci{};
 
-	std::cout << vec;
+	std::cout << origin;
 	
-	Ray ray{};
+	Ray ray{origin, direction};
+
 
 	std::cout << "Input filepath is " << aFilepath << std::endl;
 	std::ofstream writeStream(aFilepath.c_str());

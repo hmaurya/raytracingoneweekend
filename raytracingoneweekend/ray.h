@@ -17,12 +17,11 @@ namespace rt {
 		Vector3f direction() const { return m_Direction; }
 
 		Vector3f pointAtParameter(float t) const {
-			return m_Origin + t * m_Direction;
+			return m_Origin + m_Direction * t;
 		}
 
 	private:
 		Vector3f m_Origin;
 		Vector3f m_Direction;
 	};
-
 }

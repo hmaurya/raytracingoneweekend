@@ -19,6 +19,8 @@ namespace rt
 			: m_e{ aX, aY, aZ } {}
 		
 		friend std::ostream& operator<< <T>(std::ostream&, const Vector3<T>&);
+		friend inline Vector3<T> operator*(float value, const Vector3<T>& aVector);
+		friend inline Vector3<T> operator*(const Vector3<T>& aVector, float aValue);
 
 		static Vector3 forward() { return Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
 		static Vector3 right() { return Vector3(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
@@ -87,20 +89,29 @@ namespace rt
 			return *this;
 		}
 
-		inline Vector3& operator*(float value) {
-
-			this->m_e[0] = this->m_e[0] * value;
-			this->m_e[1] = this->m_e[1] * value;
-			this->m_e[2] = this->m_e[2] * value;
-
-			return *this;
-		}
+		
 
 	private:
 		T m_e[3];
 
 	};
 	
+	template<typename T>
+	inline Vector3<T> operator*(float value, const Vector3<T>& aVector) {
+
+		return Vector3<T>(aVector.m_e[0] * value,
+			aVector.m_e[1] * value,
+			aVector.m_e[2] * value);
+	}
+
+	template<typename T>
+	inline Vector3<T> operator*(const Vector3<T>& aVector, float value) {
+
+		return Vector3<T>(aVector.m_e[0] * value,
+			aVector.m_e[1] * value,
+			aVector.m_e[2] * value);
+	}
+
     // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
 	template<typename T>
 	std::ostream& operator<<(std::ostream & oStream, const Vector3<T>& input)
