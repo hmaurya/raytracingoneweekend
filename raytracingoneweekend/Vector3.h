@@ -18,7 +18,7 @@ namespace rt
 		Vector3(T aX, T aY, T aZ)
 			: m_e{ aX, aY, aZ } {}
 		
-		friend std::ostream& operator<< <T>(std::ostream& iStream, Vector3<T>& input);
+		friend std::ostream& operator<< <T>(std::ostream&, const Vector3<T>&);
 
 		static Vector3 forward() { return Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
 		static Vector3 right() { return Vector3(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
@@ -93,10 +93,13 @@ namespace rt
 
 	};
 	
+    // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
 	template<typename T>
-	std::ostream& operator<<(std::istream & iStream, const Vector3<T>& input)
+	std::ostream& operator<<(std::ostream & oStream, const Vector3<T>& input)
 	{
-
+		oStream << input.x() << " " << input.y() << " " << input.z();
+		return oStream;
 	}
 
+	typedef Vector3<float> Vector3f;
 }

@@ -3,9 +3,15 @@
 #include <fstream>
 #include <random>
 
+#include"Vector3.h"
+
 void rt::writeRandomPPM(const std::string& aFilepath, const int aWidth, const int aHeight) 
 {
 	// TODO get a simple logger from github
+	
+	Vector3f vec{ 2.123f, 3.0f, 4.0f };
+
+	std::cout << vec;
 	
 	std::cout << "Input filepath is " << aFilepath << std::endl;
 	std::ofstream writeStream(aFilepath.c_str());
