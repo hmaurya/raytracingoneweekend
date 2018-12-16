@@ -59,6 +59,5 @@ void rt::writeRandomPPM(const std::string& aFilepath, const int aWidth, const in
 	else {
 		std::cout << "unable to open the file!" << std::endl;
 	}
-
-
 }
+
