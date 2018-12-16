@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <math.h>
 
 namespace rt
 {
@@ -19,8 +20,14 @@ namespace rt
 			: m_e{ aX, aY, aZ } {}
 		
 		friend std::ostream& operator<< <T>(std::ostream&, const Vector3<T>&);
-		friend inline Vector3<T> operator*(float value, const Vector3<T>& aVector);
-		friend inline Vector3<T> operator*(const Vector3<T>& aVector, float aValue);
+		
+		template <typename U>
+		friend inline Vector3<U> operator*(float value, const Vector3<U>& aVector);
+		template <typename U>
+		friend inline Vector3<U> operator*(const Vector3<U>& aVector, float aValue);
+		template <typename U>
+		friend inline Vector3<U> operator/(const Vector3<U>& aVector, float aValue);
+
 
 		static Vector3 forward() { return Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
 		static Vector3 right() { return Vector3(static_cast<T>(1), static_cast<T>(0), static_cast<T>(0)); }
@@ -33,6 +40,28 @@ namespace rt
 		inline T r() const { return m_e[0]; }
 		inline T g() const { return m_e[1]; }
 		inline T b() const { return m_e[2]; }
+
+		static T dot(Vector3<T> aVectorA, Vector3<T> aVectorB)
+		{
+			return 
+				(aVectorA.x() * aVectorB.x()) +
+				(aVectorA.y() * aVectorB.y()) +
+				(aVectorA.z() * aVectorB.z());
+		}
+
+		static Vector3<T> cross(Vector3<T> aVectorA, Vector3<T> aVectorB)
+		{
+			return Vector3<T>
+			{
+				(aVectorA.y() * aVectorB.z() - aVectorB.y() * aVectorA.z()),
+					-(aVectorA.x() * aVectorB.z() - aVectorB.x() * aVectorA.z()),
+					(aVectorA.x() * aVectorB.y() - aVectorB.x() * aVectorA.y())
+			};
+		}
+
+		inline float length() const {
+			return sqrtf((m_e[0] * m_e[0]) + (m_e[1] * m_e[1]) + (m_e[2] * m_e[2]));
+		}
 
 		inline Vector3 operator+(const Vector3& aRHS) const { 
 			return Vector3(this->m_e[0] + aRHS.x(), this->m_e[1] + aRHS.y(), this->m_e[2] + aRHS.z());
@@ -112,12 +141,28 @@ namespace rt
 			aVector.m_e[2] * value);
 	}
 
+	template<typename T>
+	inline Vector3<T> operator/(const Vector3<T>& aVector, float value) {
+
+		return Vector3<T>(aVector.m_e[0] / value,
+			aVector.m_e[1] / value,
+			aVector.m_e[2] / value);
+	}
+
     // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
 	template<typename T>
 	std::ostream& operator<<(std::ostream & oStream, const Vector3<T>& input)
 	{
 		oStream << input.x() << " " << input.y() << " " << input.z();
 		return oStream;
+	}
+
+
+	// free functions
+	template <typename T>
+	inline Vector3<T> unitVector(const Vector3<T>& aVector)
+	{
+		return aVector / aVector.length();
 	}
 
 	typedef Vector3<float> Vector3f;

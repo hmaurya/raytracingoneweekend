@@ -11,7 +11,7 @@ int main()
     std::cout << "Hello World!\n"; 
 
 	std::string file("sample.ppm");
-	rt::writeRandomPPM(file, 640, 480);
+	rt::writeRandomPPM(file, 100, 50);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

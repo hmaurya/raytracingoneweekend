@@ -16,6 +16,9 @@ void rt::writeRandomPPM(const std::string& aFilepath, const int aWidth, const in
 
 	std::cout << origin;
 	
+	//Vector3f.cross(origin, direction);
+	Vector3f tempMul = origin * 5.0f;
+	Vector3f temp = origin / 2.0f;
 	Ray ray{origin, direction};
 
 
