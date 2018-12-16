@@ -6,6 +6,17 @@
 #include <fstream>
 
 #include "ppm.h"
+#include "Vector3.h"
+#include "ray.h"
+
+using namespace rt;
+
+Vector3f color(const Ray& aRay)
+{
+	Vector3f unit_direction = unitVector(aRay.direction());
+	float t = 0.5f * (unit_direction.y() + 1.0f);
+	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
+}
 
 void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 {
@@ -25,16 +36,25 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 		unsigned int green = MAXVALUE;
 		unsigned int blue = MAXVALUE;
 
+
+		Vector3f lowerLeftCorner{ -2.0, -1.0, -1.0 };
+		Vector3f horizontal { 4.0, 0.0, 0.0 };
+		Vector3f verticle { 0.0, 2.0, 0.0 };
+		Vector3f origin { 0.0, 0.0, 0.0 };
+
+
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
 
-				float r = static_cast<float>(col) / static_cast<float>(aWidth);
-				float g = static_cast<float>(row) / static_cast<float>(aHeight);
-				float b = 0.2f;
+				float u = static_cast<float>(col) / static_cast<float>(aWidth);
+				float v = static_cast<float>(row) / static_cast<float>(aHeight);
 
-				red = static_cast<int>(255.99 * r);
-				green = static_cast<int>(255.99 * g);
-				blue = static_cast<int>(255.99 * b);
+				Ray r(origin, lowerLeftCorner + u * horizontal + v * verticle);
+				Vector3f pickedColor = color(r);
+
+				red = static_cast<int>(255.99 * pickedColor[0]);
+				green = static_cast<int>(255.99 * pickedColor[1]);
+				blue = static_cast<int>(255.99 * pickedColor[2]);
 
 				writeStream << red << " " << green << " " << blue << " ";
 			}
