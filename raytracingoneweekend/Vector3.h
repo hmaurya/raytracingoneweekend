@@ -41,7 +41,7 @@ namespace rt
 		inline T g() const { return m_e[1]; }
 		inline T b() const { return m_e[2]; }
 
-		static T dot(Vector3<T> aVectorA, Vector3<T> aVectorB)
+		static T dot(const Vector3<T>& aVectorA, const Vector3<T>& aVectorB)
 		{
 			return 
 				(aVectorA.x() * aVectorB.x()) +

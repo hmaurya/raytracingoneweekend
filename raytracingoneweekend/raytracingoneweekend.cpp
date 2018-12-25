@@ -11,9 +11,27 @@
 
 using namespace rt;
 
+
+bool hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
+{
+	Vector3f oc = aRay.origin() - aCenter;
+	float a = Vector3f::dot(aRay.direction(), aRay.direction());
+	float b = 2.0f * Vector3f::dot(aRay.direction(), oc);
+	float c = Vector3f::dot(oc, oc) - aRadius * aRadius;
+
+	float discriminant = b * b - 4 * a * c;
+	
+	return (discriminant > 0.f);
+}
+
 Vector3f color(const Ray& aRay)
 {
+	if (hitSphere(Vector3f(0.0f, 0.0f, -1.0f), 0.5, aRay)) {
+		return Vector3f(1.0f, 0.0f, 0.0f);
+	}
+
 	Vector3f unit_direction = unitVector(aRay.direction());
+	// mapping [-1,1] -> [0-1]
 	float t = 0.5f * (unit_direction.y() + 1.0f);
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
