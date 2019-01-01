@@ -4,10 +4,12 @@
 #include "pch.h"
 #include <iostream>
 #include <fstream>
+#include <vector>
 
 #include "ppm.h"
 #include "Vector3.h"
 #include "ray.h"
+#include "hitable.h"
 
 using namespace rt;
 
@@ -35,6 +37,24 @@ Vector3f color(const Ray& aRay)
 	float t = hitSphere(Vector3f(0.0f, 0.0f, -1.0f), 0.5, aRay);
 	if (t > 0.0f) {
 		Vector3f normal = unitVector(aRay.pointAtParameter(t) - sphereCenter);
+		return 0.5f * Vector3f(normal.x() + 1.0f, normal.y() + 1.0f, normal.z() + 1.0f);
+	}
+
+	Vector3f unit_direction = unitVector(aRay.direction());
+	// mapping [-1,1] -> [0-1]
+	t = 0.5f * (unit_direction.y() + 1.0f);
+	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
+}
+
+Vector3f color(const Ray& aRay, const Hitable& aHitable)
+{
+	Vector3f sphereCenter = Vector3f(0.0f, 0.0f, -1.0f);
+	
+	HitRecord hitRecord;
+
+	float t = aHitable.hit(aRay, 0.0f, FLT_MAX, hitRecord);
+	if (t > 0.0f) {
+		Vector3f normal = hitRecord.normal;
 		return 0.5f * Vector3f(normal.x() + 1.0f, normal.y() + 1.0f, normal.z() + 1.0f);
 	}
 
