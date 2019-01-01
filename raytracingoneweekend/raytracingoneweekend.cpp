@@ -12,7 +12,7 @@
 using namespace rt;
 
 
-bool hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
+float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 {
 	Vector3f oc = aRay.origin() - aCenter;
 	float a = Vector3f::dot(aRay.direction(), aRay.direction());
@@ -21,18 +21,26 @@ bool hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 
 	float discriminant = b * b - 4 * a * c;
 	
-	return (discriminant > 0.f);
+	if (discriminant < 0.f) {
+		return -1.0f;
+	}
+	else {
+		return (-b - sqrtf(discriminant)) / (2.0f * a);
+	}
 }
 
 Vector3f color(const Ray& aRay)
 {
-	if (hitSphere(Vector3f(0.0f, 0.0f, -1.0f), 0.5, aRay)) {
-		return Vector3f(1.0f, 0.0f, 0.0f);
+	Vector3f sphereCenter = Vector3f(0.0f, 0.0f, -1.0f);
+	float t = hitSphere(Vector3f(0.0f, 0.0f, -1.0f), 0.5, aRay);
+	if (t > 0.0f) {
+		Vector3f normal = unitVector(aRay.pointAtParameter(t) - sphereCenter);
+		return 0.5f * Vector3f(normal.x() + 1.0f, normal.y() + 1.0f, normal.z() + 1.0f);
 	}
 
 	Vector3f unit_direction = unitVector(aRay.direction());
 	// mapping [-1,1] -> [0-1]
-	float t = 0.5f * (unit_direction.y() + 1.0f);
+	t = 0.5f * (unit_direction.y() + 1.0f);
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
 
