@@ -6,12 +6,14 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <time.h>
 
 #include "ppm.h"
 #include "Vector3.h"
 #include "ray.h"
 #include "hitable.h"
 #include "sphere.h"
+#include "camera.h"
 
 using namespace rt;
 
@@ -24,7 +26,7 @@ float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 	float c = Vector3f::dot(oc, oc) - aRadius * aRadius;
 
 	float discriminant = b * b - 4 * a * c;
-	
+
 	if (discriminant < 0.f) {
 		return -1.0f;
 	}
@@ -62,11 +64,12 @@ Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables)
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
 
-void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
+void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight, const int aNumSamplesPerRay)
 {
 	// TODO get a simple logger from github
 	std::cout << "Input filepath is " << aFilepath << std::endl;
 	std::ofstream writeStream(aFilepath.c_str());
+	srand((unsigned int)time(0));
 
 	const unsigned int MAXVALUE = UCHAR_MAX;
 
@@ -80,26 +83,28 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 		unsigned int green = MAXVALUE;
 		unsigned int blue = MAXVALUE;
 
-
-		Vector3f lowerLeftCorner{ -2.0, -1.0, -1.0 };
-		Vector3f horizontal { 4.0, 0.0, 0.0 };
-		Vector3f verticle { 0.0, 2.0, 0.0 };
-		Vector3f origin { 0.0, 0.0, 0.0 };
-
 		std::vector<Hitable*> spheres;
 
 		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5));
 		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100));
 
+		Camera cam;
 
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
 
-				float u = static_cast<float>(col) / static_cast<float>(aWidth);
-				float v = static_cast<float>(row) / static_cast<float>(aHeight);
+				Vector3f pickedColor(0., 0.,0.);
+				for (int ns = 0; ns < aNumSamplesPerRay; ++ns) {
 
-				Ray r(origin, lowerLeftCorner + u * horizontal + v * verticle);
-				Vector3f pickedColor = color(r, spheres);
+					float rc = (float)rand() / (float)RAND_MAX;
+					float rr = (float)rand() / (float)RAND_MAX;
+
+					float u = static_cast<float>(col + rc) / static_cast<float>(aWidth);
+					float v = static_cast<float>(row + rr) / static_cast<float>(aHeight);
+					Ray r = cam.ray(u, v);
+					pickedColor += color(r, spheres);
+				}
+				pickedColor = pickedColor / (float)aNumSamplesPerRay;
 
 				red = static_cast<int>(255.99 * pickedColor[0]);
 				green = static_cast<int>(255.99 * pickedColor[1]);
@@ -120,10 +125,13 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 
 int main()
 {
-    std::cout << "Hello World!\n"; 
+	std::cout << "Hello World!\n";
 
 	std::string file("sample.ppm");
-	writePPM(file, 200, 100);
+	int width = 200;
+	int height = 100;
+	int numSamplesPerRay = 100;
+	writePPM(file, width, height, numSamplesPerRay);
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
