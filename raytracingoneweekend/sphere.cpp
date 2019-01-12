@@ -44,7 +44,7 @@ namespace rt {
 
 		for (size_t i = 0; i < aHitables.size(); ++i) {
 			HitRecord record;
-			if (aHitables[i]->hit(aRay, 0.0f, nearest, record)) {
+			if (aHitables[i]->hit(aRay, 0.001f, nearest, record)) {
 				hitAnything = true;
 				if (record.t < nearest) {
 					nearest = record.t;

@@ -63,6 +63,10 @@ namespace rt
 			return sqrtf((m_e[0] * m_e[0]) + (m_e[1] * m_e[1]) + (m_e[2] * m_e[2]));
 		}
 
+		inline float squaredLength() const {
+			return (m_e[0] * m_e[0]) + (m_e[1] * m_e[1]) + (m_e[2] * m_e[2]);
+		}
+
 		inline Vector3 operator+(const Vector3& aRHS) const { 
 			return Vector3(this->m_e[0] + aRHS.x(), this->m_e[1] + aRHS.y(), this->m_e[2] + aRHS.z());
 		}

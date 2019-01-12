@@ -17,6 +17,12 @@
 
 using namespace rt;
 
+inline float randFloat()
+{
+	// make sure srand is called somewhere before using this method
+	return (float)rand() / (float)RAND_MAX;
+}
+
 
 float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 {
@@ -33,6 +39,16 @@ float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 	else {
 		return (-b - sqrtf(discriminant)) / (2.0f * a);
 	}
+}
+
+Vector3f randomPointInUnitSphere() {
+	Vector3f p;
+
+	do {
+		p = 2.0f * Vector3f(randFloat(), randFloat(), randFloat()) - Vector3f(1.0f, 1.0f, 1.0f);
+	} while (p.squaredLength() >= 1.0f);
+
+	return p;
 }
 
 Vector3f color(const Ray& aRay)
@@ -54,14 +70,17 @@ Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables)
 {
 	HitRecord record;
 	if (Sphere::hitSpheres(aRay, 0.0f, std::numeric_limits<float>::max(), aHitables, record)) {
-		Vector3f normal = record.normal;
-		return 0.5f * Vector3f(normal.x() + 1.0f, normal.y() + 1.0f, normal.z() + 1.0f);
+		Vector3f target = record.p + record.normal + randomPointInUnitSphere();
+		Vector3f newColor = color(Ray(record.p, target - record.p), aHitables);
+		return 0.5f * Vector3f(newColor.x(), newColor.y(), newColor.z());
 	}
+	else {
 
-	Vector3f unit_direction = unitVector(aRay.direction());
-	// mapping [-1,1] -> [0-1]
-	float t = 0.5f * (unit_direction.y() + 1.0f);
-	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
+		Vector3f unit_direction = unitVector(aRay.direction());
+		// mapping [-1,1] -> [0-1]
+		float t = 0.5f * (unit_direction.y() + 1.0f);
+		return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
+	}
 }
 
 void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight, const int aNumSamplesPerRay)
@@ -69,6 +88,7 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 	// TODO get a simple logger from github
 	std::cout << "Input filepath is " << aFilepath << std::endl;
 	std::ofstream writeStream(aFilepath.c_str());
+	
 	srand((unsigned int)time(0));
 
 	const unsigned int MAXVALUE = UCHAR_MAX;
