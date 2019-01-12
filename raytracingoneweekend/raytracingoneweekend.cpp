@@ -69,6 +69,7 @@ Vector3f color(const Ray& aRay)
 Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables)
 {
 	HitRecord record;
+
 	if (Sphere::hitSpheres(aRay, 0.0f, std::numeric_limits<float>::max(), aHitables, record)) {
 		Vector3f target = record.p + record.normal + randomPointInUnitSphere();
 		Vector3f newColor = color(Ray(record.p, target - record.p), aHitables);
@@ -126,9 +127,9 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 				}
 				pickedColor = pickedColor / (float)aNumSamplesPerRay;
 
-				red = static_cast<int>(255.99 * pickedColor[0]);
-				green = static_cast<int>(255.99 * pickedColor[1]);
-				blue = static_cast<int>(255.99 * pickedColor[2]);
+				red = static_cast<int>(255.99 * sqrtf(pickedColor[0]));
+				green = static_cast<int>(255.99 * sqrtf(pickedColor[1]));
+				blue = static_cast<int>(255.99 * sqrtf(pickedColor[2]));
 
 				writeStream << red << " " << green << " " << blue << " ";
 			}
