@@ -5,11 +5,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 #include "ppm.h"
 #include "Vector3.h"
 #include "ray.h"
 #include "hitable.h"
+#include "sphere.h"
 
 using namespace rt;
 
@@ -46,21 +48,17 @@ Vector3f color(const Ray& aRay)
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
 
-Vector3f color(const Ray& aRay, const Hitable& aHitable)
+Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables)
 {
-	Vector3f sphereCenter = Vector3f(0.0f, 0.0f, -1.0f);
-	
-	HitRecord hitRecord;
-
-	float t = aHitable.hit(aRay, 0.0f, FLT_MAX, hitRecord);
-	if (t > 0.0f) {
-		Vector3f normal = hitRecord.normal;
+	HitRecord record;
+	if (Sphere::hitSpheres(aRay, 0.0f, std::numeric_limits<float>::max(), aHitables, record)) {
+		Vector3f normal = record.normal;
 		return 0.5f * Vector3f(normal.x() + 1.0f, normal.y() + 1.0f, normal.z() + 1.0f);
 	}
 
 	Vector3f unit_direction = unitVector(aRay.direction());
 	// mapping [-1,1] -> [0-1]
-	t = 0.5f * (unit_direction.y() + 1.0f);
+	float t = 0.5f * (unit_direction.y() + 1.0f);
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
 
@@ -88,6 +86,11 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 		Vector3f verticle { 0.0, 2.0, 0.0 };
 		Vector3f origin { 0.0, 0.0, 0.0 };
 
+		std::vector<Hitable*> spheres;
+
+		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5));
+		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100));
+
 
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
@@ -96,7 +99,7 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight)
 				float v = static_cast<float>(row) / static_cast<float>(aHeight);
 
 				Ray r(origin, lowerLeftCorner + u * horizontal + v * verticle);
-				Vector3f pickedColor = color(r);
+				Vector3f pickedColor = color(r, spheres);
 
 				red = static_cast<int>(255.99 * pickedColor[0]);
 				green = static_cast<int>(255.99 * pickedColor[1]);

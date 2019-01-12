@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 #include "hitable.h"
 
 namespace rt
@@ -29,6 +31,12 @@ namespace rt
 		}
 
 		bool hit(const Ray& aRay, float t_min, float t_max, HitRecord& hitRecord) const;
+
+		static bool hitSpheres(const Ray& aRay, 
+			float t_min, 
+			float t_max, 
+			const std::vector<Hitable*>& aHitables, 
+			HitRecord& aRecord);
 
 	private:
 		Vector3f mCenter;

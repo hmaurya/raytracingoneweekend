@@ -33,4 +33,27 @@ namespace rt {
 		return false;
 	}
 
+	bool Sphere::hitSpheres(const Ray & aRay, 
+		float t_min, 
+		float t_max, 
+		const std::vector<Hitable*>& aHitables, 
+		HitRecord & aRecord)
+	{
+		float nearest = std::numeric_limits<float>::max();
+		bool hitAnything = false;
+
+		for (size_t i = 0; i < aHitables.size(); ++i) {
+			HitRecord record;
+			if (aHitables[i]->hit(aRay, 0.0f, nearest, record)) {
+				hitAnything = true;
+				if (record.t < nearest) {
+					nearest = record.t;
+					aRecord = record;
+				}
+			}
+		}
+		return hitAnything;
+	}
+
+
 }
