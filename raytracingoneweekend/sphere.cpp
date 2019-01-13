@@ -18,6 +18,7 @@ namespace rt {
 				hitRecord.t = temp;
 				hitRecord.p = aRay.pointAtParameter(temp);
 				hitRecord.normal = (hitRecord.p - mCenter) / mRadius;
+				hitRecord.material = mMaterial;
 				return true;
 			}
 
@@ -26,6 +27,7 @@ namespace rt {
 				hitRecord.t = temp;
 				hitRecord.p = aRay.pointAtParameter(temp);
 				hitRecord.normal = (hitRecord.p - mCenter) / mRadius;
+				hitRecord.material = mMaterial;
 				return true;
 			}
 		}
@@ -33,18 +35,18 @@ namespace rt {
 		return false;
 	}
 
-	bool Sphere::hitSpheres(const Ray & aRay, 
+	bool Sphere::hit(const Ray & aRay, 
 		float t_min, 
 		float t_max, 
 		const std::vector<Hitable*>& aHitables, 
 		HitRecord & aRecord)
 	{
-		float nearest = std::numeric_limits<float>::max();
+		float nearest = t_max;
 		bool hitAnything = false;
 
 		for (size_t i = 0; i < aHitables.size(); ++i) {
 			HitRecord record;
-			if (aHitables[i]->hit(aRay, 0.001f, nearest, record)) {
+			if (aHitables[i]->hit(aRay, t_min, nearest, record)) {
 				hitAnything = true;
 				if (record.t < nearest) {
 					nearest = record.t;

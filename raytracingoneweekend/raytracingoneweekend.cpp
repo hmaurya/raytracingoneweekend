@@ -14,42 +14,12 @@
 #include "hitable.h"
 #include "sphere.h"
 #include "camera.h"
+#include "utilities.h"
+#include "lambertian.h"
+#include "metal.h"
+
 
 using namespace rt;
-
-inline float randFloat()
-{
-	// make sure srand is called somewhere before using this method
-	return (float)rand() / (float)RAND_MAX;
-}
-
-
-float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
-{
-	Vector3f oc = aRay.origin() - aCenter;
-	float a = Vector3f::dot(aRay.direction(), aRay.direction());
-	float b = 2.0f * Vector3f::dot(aRay.direction(), oc);
-	float c = Vector3f::dot(oc, oc) - aRadius * aRadius;
-
-	float discriminant = b * b - 4 * a * c;
-
-	if (discriminant < 0.f) {
-		return -1.0f;
-	}
-	else {
-		return (-b - sqrtf(discriminant)) / (2.0f * a);
-	}
-}
-
-Vector3f randomPointInUnitSphere() {
-	Vector3f p;
-
-	do {
-		p = 2.0f * Vector3f(randFloat(), randFloat(), randFloat()) - Vector3f(1.0f, 1.0f, 1.0f);
-	} while (p.squaredLength() >= 1.0f);
-
-	return p;
-}
 
 Vector3f color(const Ray& aRay)
 {
@@ -66,14 +36,20 @@ Vector3f color(const Ray& aRay)
 	return (1.0f - t)*Vector3f(1.0f, 1.0f, 1.0f) + t * Vector3f(0.5f, 0.7f, 1.0f);
 }
 
-Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables)
+Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables, int aDepth)
 {
 	HitRecord record;
 
-	if (Sphere::hitSpheres(aRay, 0.0f, std::numeric_limits<float>::max(), aHitables, record)) {
-		Vector3f target = record.p + record.normal + randomPointInUnitSphere();
-		Vector3f newColor = color(Ray(record.p, target - record.p), aHitables);
-		return 0.5f * Vector3f(newColor.x(), newColor.y(), newColor.z());
+	if (Sphere::hit(aRay, 0.001f, std::numeric_limits<float>::max(), aHitables, record)) {
+
+		Ray scattered;
+		Vector3f attenuation;
+		if (aDepth < 50 && record.material->scatter(aRay, record, attenuation, scattered)) {
+			return attenuation * color(scattered, aHitables, aDepth + 1);
+		}
+		else {
+			return Vector3f(0.0f, 0.0f, 0.0f);
+		}
 	}
 	else {
 
@@ -106,8 +82,10 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 
 		std::vector<Hitable*> spheres;
 
-		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5));
-		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100));
+		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.8f, 0.3f, 0.3f))));
+		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
+		spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f))));
+		spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.8f, 0.8f))));
 
 		Camera cam;
 
@@ -123,7 +101,7 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 					float u = static_cast<float>(col + rc) / static_cast<float>(aWidth);
 					float v = static_cast<float>(row + rr) / static_cast<float>(aHeight);
 					Ray r = cam.ray(u, v);
-					pickedColor += color(r, spheres);
+					pickedColor += color(r, spheres, 0);
 				}
 				pickedColor = pickedColor / (float)aNumSamplesPerRay;
 

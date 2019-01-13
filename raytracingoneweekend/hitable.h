@@ -6,10 +6,13 @@
 namespace rt
 {
 
+	class Material;
+
 	struct HitRecord {
 		float t;
 		Vector3f p;
 		Vector3f normal;
+		Material *material;
 	};
 
 	class Hitable

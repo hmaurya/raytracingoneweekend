@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "hitable.h"
+#include "material.h"
 
 namespace rt
 {
@@ -10,9 +11,11 @@ namespace rt
 	{
 	public:
 		Sphere() = default;
-		Sphere(Vector3f aCenter, float aRadius)
+		Sphere(Vector3f aCenter, float aRadius, Material* aMaterial)
 			: mCenter(aCenter)
-			, mRadius(aRadius) {}
+			, mRadius(aRadius) 
+			, mMaterial(aMaterial)
+		{}
 
 		Vector3f center() const {
 			return mCenter;
@@ -30,9 +33,9 @@ namespace rt
 			mRadius = aRadius;
 		}
 
-		bool hit(const Ray& aRay, float t_min, float t_max, HitRecord& hitRecord) const;
+		bool hit(const Ray& aRay, float t_min, float t_max, HitRecord& hitRecord) const override;
 
-		static bool hitSpheres(const Ray& aRay, 
+		static bool hit(const Ray& aRay, 
 			float t_min, 
 			float t_max, 
 			const std::vector<Hitable*>& aHitables, 
@@ -41,5 +44,6 @@ namespace rt
 	private:
 		Vector3f mCenter;
 		float mRadius;
+		Material *mMaterial;
 	};
 }

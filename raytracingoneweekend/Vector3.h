@@ -27,6 +27,8 @@ namespace rt
 		friend inline Vector3<U> operator*(const Vector3<U>& aVector, float aValue);
 		template <typename U>
 		friend inline Vector3<U> operator/(const Vector3<U>& aVector, float aValue);
+		template <typename U>
+		friend inline Vector3<U> operator*(const Vector3<U>& aVector, const Vector3<U>& aVector2);
 
 
 		static Vector3 forward() { return Vector3(static_cast<T>(0), static_cast<T>(0), static_cast<T>(1)); }
@@ -98,13 +100,13 @@ namespace rt
 		}
 		
 		// TODO listed in the book as the header. But does not make sense as Vector multiplication is defined as scaler multiplication
-		/*inline Vector3& operator*=(const Vector3& aRHS) {
+		inline Vector3& operator*=(const Vector3& aRHS) {
 			this->m_e[0] *= aRHS.m_e[0];
 			this->m_e[1] *= aRHS.m_e[1];
 			this->m_e[2] *= aRHS.m_e[2];
 
 			return *this;
-		}*/
+		}
 
 		inline Vector3& operator*=(const T& aRHS) {
 			this->m_e[0] = this->m_e[0] * aRHS;
@@ -151,6 +153,14 @@ namespace rt
 		return Vector3<T>(aVector.m_e[0] / value,
 			aVector.m_e[1] / value,
 			aVector.m_e[2] / value);
+	}
+
+	template<typename T>
+	inline Vector3<T> operator*(const Vector3<T>& aVector, const Vector3<T>& aVector2)
+	{
+		return Vector3<T>(aVector.m_e[0] * aVector2.m_e[0],
+			aVector.m_e[1] * aVector2.m_e[1],
+			aVector.m_e[2] * aVector2.m_e[2]);
 	}
 
     // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
