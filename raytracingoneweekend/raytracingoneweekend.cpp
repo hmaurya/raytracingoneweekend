@@ -9,7 +9,7 @@
 #include <time.h>
 
 #include "ppm.h"
-#include "Vector3.h"
+#include "vector3.h"
 #include "ray.h"
 #include "hitable.h"
 #include "sphere.h"

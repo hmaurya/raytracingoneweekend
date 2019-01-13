@@ -3,7 +3,7 @@
 #include <fstream>
 #include <random>
 
-#include"Vector3.h"
+#include"vector3.h"
 #include "ray.h"
 
 void rt::writeRandomPPM(const std::string& aFilepath, const int aWidth, const int aHeight) 

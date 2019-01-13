@@ -10,7 +10,7 @@ namespace rt
 	template <typename T> std::ostream& operator<<(std::ostream&, const Vector3<T>&);
 
 	template<typename T>
-	class Vector3 
+	class Vector3
 	{
 	public:
 
@@ -18,9 +18,9 @@ namespace rt
 		// c++ 11 construtor list initialization
 		Vector3(T aX, T aY, T aZ)
 			: m_e{ aX, aY, aZ } {}
-		
+
 		friend std::ostream& operator<< <T>(std::ostream&, const Vector3<T>&);
-		
+
 		template <typename U>
 		friend inline Vector3<U> operator*(float value, const Vector3<U>& aVector);
 		template <typename U>
@@ -45,7 +45,7 @@ namespace rt
 
 		static T dot(const Vector3<T>& aVectorA, const Vector3<T>& aVectorB)
 		{
-			return 
+			return
 				(aVectorA.x() * aVectorB.x()) +
 				(aVectorA.y() * aVectorB.y()) +
 				(aVectorA.z() * aVectorB.z());
@@ -69,10 +69,10 @@ namespace rt
 			return (m_e[0] * m_e[0]) + (m_e[1] * m_e[1]) + (m_e[2] * m_e[2]);
 		}
 
-		inline Vector3 operator+(const Vector3& aRHS) const { 
+		inline Vector3 operator+(const Vector3& aRHS) const {
 			return Vector3(this->m_e[0] + aRHS.x(), this->m_e[1] + aRHS.y(), this->m_e[2] + aRHS.z());
 		}
-		
+
 		inline Vector3 operator-(const Vector3& aRHS) const {
 			return Vector3(this->m_e[0] - aRHS.x(), this->m_e[1] - aRHS.y(), this->m_e[2] - aRHS.z());
 		}
@@ -98,7 +98,7 @@ namespace rt
 
 			return *this;
 		}
-		
+
 		// TODO listed in the book as the header. But does not make sense as Vector multiplication is defined as scaler multiplication
 		inline Vector3& operator*=(const Vector3& aRHS) {
 			this->m_e[0] *= aRHS.m_e[0];
@@ -124,13 +124,13 @@ namespace rt
 			return *this;
 		}
 
-		
+
 
 	private:
 		T m_e[3];
 
 	};
-	
+
 	template<typename T>
 	inline Vector3<T> operator*(float value, const Vector3<T>& aVector) {
 
@@ -163,7 +163,7 @@ namespace rt
 			aVector.m_e[2] * aVector2.m_e[2]);
 	}
 
-    // https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
+	// https://stackoverflow.com/questions/4660123/overloading-friend-operator-for-template-class
 	template<typename T>
 	std::ostream& operator<<(std::ostream & oStream, const Vector3<T>& input)
 	{
