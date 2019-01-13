@@ -84,8 +84,8 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 
 		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.8f, 0.3f, 0.3f))));
 		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
-		spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f))));
-		spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.8f, 0.8f))));
+		spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f), 0.3f)));
+		spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.8f, 0.8f), 1.0f)));
 
 		Camera cam;
 
