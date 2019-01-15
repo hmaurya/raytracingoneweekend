@@ -10,15 +10,27 @@ namespace rt {
 	{
 	public:
 
-		Camera(float aVerticleFoVInDegrees, float aAspectRatio) {
+		Camera(const Vector3f& aLookFrom, 
+			const Vector3f& aLookAt, 
+			const Vector3f& aUp, 
+			float aVerticleFoVInDegrees, 
+			float aAspectRatio) 
+		{
+			Vector3f u, v, w;
+
 			float thetaInRadians = aVerticleFoVInDegrees * (float)M_PI / 180.0f;
 			float halfHeight = tan(thetaInRadians / 2.0f);
 			float halfWidth = aAspectRatio * halfHeight;
 
-			mLowerLeftCorner = Vector3f{ -halfWidth, -halfHeight, -1.0 };
-			mHorizontal = Vector3f{ 2.0f * halfWidth, 0.0, 0.0 };
-			mVerticle = Vector3f{ 0.0, 2.0f * halfHeight, 0.0 };
-			mOrigin = Vector3f{ 0.0, 0.0, 0.0 };
+			mOrigin = aLookFrom;
+			w = unitVector(aLookFrom - aLookAt);
+			u = unitVector(Vector3f::cross(aUp, w));
+			v = Vector3f::cross(w, u);
+
+			mLowerLeftCorner = mOrigin - halfWidth * u - halfHeight * v - w;
+
+			mHorizontal = 2.0f * halfWidth * u;
+			mVerticle = 2.0f * halfHeight * v;
 		}
 
 		Ray ray(float aU, float aV) {

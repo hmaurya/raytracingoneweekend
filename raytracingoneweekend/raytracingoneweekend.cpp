@@ -83,17 +83,18 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 
 		std::vector<Hitable*> spheres;
 
-		//spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.1f, 0.2f, 0.5f))));
-		//spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
-		//spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f), 0.3f)));
-		////spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Dielectric(1.5f)));
-		//spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), -0.45f, new Dielectric(1.5f)));
+		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.1f, 0.2f, 0.5f))));
+		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
+		spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f), 0.3f)));
+		//spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Dielectric(1.5f)));
+		spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), -0.45f, new Dielectric(1.5f)));
 
-		float R = cos((float)M_PI / 4);
+		/*float R = cos((float)M_PI / 4);
 		spheres.push_back(new Sphere(Vector3f(-R, 0., -1.), R, new Lambertian(Vector3f(0.f, 0.f, 1.f))));
-		spheres.push_back(new Sphere(Vector3f(R, 0., -1.), R, new Lambertian(Vector3f(1.f, 0.f, 0.f))));
+		spheres.push_back(new Sphere(Vector3f(R, 0., -1.), R, new Lambertian(Vector3f(1.f, 0.f, 0.f))));*/
 
-		Camera cam(90.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight));
+		Camera cam(Vector3f(-2, 2, 1), Vector3f(0, 0, -1), Vector3f(0, 1, 0), 
+			90.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight));
 
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
