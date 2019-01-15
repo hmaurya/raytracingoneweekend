@@ -55,4 +55,11 @@ namespace rt
 			return (-b - sqrtf(discriminant)) / (2.0f * a);
 		}
 	}
+
+	float schlick(float aCosine, float aRefIndex)
+	{
+		float r0 = (1 - aRefIndex) / (1 + aRefIndex);
+		r0 = r0 * r0;
+		return  r0 + (1 - r0) * pow((1 - aCosine), 5);
+	}
 }
