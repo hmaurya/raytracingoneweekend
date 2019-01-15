@@ -25,6 +25,20 @@ namespace rt
 		return aIn - 2.0f * Vector3f::dot(aIn, aNormal) * aNormal;
 	}
 
+	bool refract(const Vector3f& aInVector, const Vector3f& aNormal, float aNiOverNt, Vector3f& aRefracted)
+	{
+		Vector3f unitInVector = unitVector(aInVector);
+		float dt = Vector3f::dot(unitInVector, aNormal);
+		float discriminant = 1.0f - aNiOverNt * aNiOverNt * (1 - dt * dt);
+		if (discriminant > 0) {
+			aRefracted = aNiOverNt * (unitInVector - aNormal * dt) - aNormal * sqrt(discriminant);
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
 	float hitSphere(const Vector3f& aCenter, float aRadius, const Ray& aRay)
 	{
 		Vector3f oc = aRay.origin() - aCenter;

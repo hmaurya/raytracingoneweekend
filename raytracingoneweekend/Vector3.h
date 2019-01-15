@@ -78,7 +78,7 @@ namespace rt
 		}
 
 		inline const Vector3& operator+() const { return *this; }
-		inline Vector3 operator-() { return Vector3(-this->m_e[0], -this->m_e[1], -this->m_e[2]); }
+		inline Vector3 operator-() const { return Vector3(-this->m_e[0], -this->m_e[1], -this->m_e[2]); }
 
 		inline const T& operator[](int aIndex) const { return m_e[aIndex]; }
 		inline T& operator[](int aIndex) { return m_e[aIndex]; }
