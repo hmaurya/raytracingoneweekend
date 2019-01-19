@@ -61,14 +61,54 @@ Vector3f color(const Ray& aRay, const std::vector<Hitable*>& aHitables, int aDep
 	}
 }
 
+std::vector<Hitable*> randomScene()
+{
+	int n = 500;
+	std::vector<Hitable*> scene;
+	scene.reserve(n + 1);
+
+	scene.push_back(new Sphere(Vector3f(0.0f, -1000.0f, 0.0f), 1000.0f, new Lambertian(Vector3f(0.5f, 0.5f, 0.5f))));
+	
+	for (int a = -11; a < 11; ++a) {
+		for (int b = -11; b < 11; ++b) {
+			float choose_material = randFloat();
+			Vector3f center(a + 0.9f * randFloat(), 0.2f, b + 0.9f * randFloat());
+
+			if ((center - Vector3f(4.0f, 0.2f, 0.0f)).length() > 0.9f) {
+
+				if (choose_material < 0.8) {
+					// diffuse
+					scene.push_back(new Sphere(center, 0.2f, new Lambertian(Vector3f(randFloat() * randFloat(),
+						randFloat() * randFloat(),
+						randFloat() * randFloat()))));
+				}
+				else if (choose_material < 0.95f) {
+					// metal
+					scene.push_back(new Sphere(center, 0.2f, new Metal(Vector3f(0.5f * (1 + randFloat()),
+						0.5f * (1 + randFloat()),
+						0.5f * (1 + randFloat())), 0.5f * randFloat())));
+				}
+				else {
+					// glass
+					scene.push_back((new Sphere(center, 0.2f, new Dielectric(1.5f))));
+				}
+			}
+		}
+	}
+
+	scene.push_back(new Sphere(Vector3f(0.0f, 1.0f, 0.0f), 1.0f, new Dielectric(1.5)));
+	scene.push_back(new Sphere(Vector3f(-4.0f, 1.0f, 0.0f), 1.0f, new Lambertian(Vector3f(0.4f, 0.2f, 0.1f))));
+	scene.push_back(new Sphere(Vector3f(4.0f, 1.0f, 0.0f), 1.0f, new Metal(Vector3f(0.7f, 0.6f, 0.5f), 0.0f)));
+
+	return scene;
+}
+
 void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight, const int aNumSamplesPerRay)
 {
 	// TODO get a simple logger from github
 	std::cout << "Input filepath is " << aFilepath << std::endl;
 	std::ofstream writeStream(aFilepath.c_str());
 	
-	srand((unsigned int)time(0));
-
 	const unsigned int MAXVALUE = UCHAR_MAX;
 
 	if (writeStream.is_open()) {
@@ -81,24 +121,24 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 		unsigned int green = MAXVALUE;
 		unsigned int blue = MAXVALUE;
 
-		std::vector<Hitable*> spheres;
+		std::vector<Hitable*> spheres = randomScene();
 
-		spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.1f, 0.2f, 0.5f))));
-		spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
-		spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f), 0.3f)));
-		//spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Dielectric(1.5f)));
-		spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), -0.45f, new Dielectric(1.5f)));
+		//spheres.push_back(new Sphere(Vector3f(0., 0., -1.), 0.5, new Lambertian(Vector3f(0.1f, 0.2f, 0.5f))));
+		//spheres.push_back(new Sphere(Vector3f(0., -100.5, -1), 100.0f, new Lambertian(Vector3f(0.8f, 0.8f, 0.0f))));
+		//spheres.push_back(new Sphere(Vector3f(1., 0., -1.), 0.5f, new Metal(Vector3f(0.8f, 0.6f, 0.2f), 0.3f)));
+		////spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), 0.5f, new Dielectric(1.5f)));
+		//spheres.push_back(new Sphere(Vector3f(-1., 0., -1.), -0.45f, new Dielectric(1.5f)));
 
 		/*float R = cos((float)M_PI / 4);
 		spheres.push_back(new Sphere(Vector3f(-R, 0., -1.), R, new Lambertian(Vector3f(0.f, 0.f, 1.f))));
 		spheres.push_back(new Sphere(Vector3f(R, 0., -1.), R, new Lambertian(Vector3f(1.f, 0.f, 0.f))));*/
 
-		const Vector3f lookFrom(3.0f, 3.0f, 2.0f);
-		const Vector3f lookAt(0, 0, -1);
-		const float distanceToFocus = (lookFrom - lookAt).length();
-		const float aperture = 2.0f;
+		const Vector3f lookFrom(15.0f, 2.0f, 4.0f);
+		const Vector3f lookAt(-10.0, -1.0, -3);
+		const float distanceToFocus = (lookFrom - lookAt).length() / 2.0f;
+		const float aperture = 0.15f;
 		Camera cam(lookFrom, lookAt, Vector3f(0, 1, 0), 
-			20.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight), aperture, distanceToFocus);
+			18.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight), aperture, distanceToFocus);
 
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
@@ -138,9 +178,11 @@ int main()
 	std::cout << "Hello World!\n";
 
 	std::string file("sample.ppm");
-	int width = 200;
-	int height = 100;
+	int width = 400;
+	int height = 200;
 	int numSamplesPerRay = 100;
+	srand((unsigned int)time(0));
+
 	writePPM(file, width, height, numSamplesPerRay);
 }
 
