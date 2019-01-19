@@ -3,6 +3,7 @@
 #include "vector3.h"
 #include "ray.h"
 #include <corecrt_math_defines.h>
+#include "utilities.h"
 
 namespace rt {
 
@@ -14,27 +15,31 @@ namespace rt {
 			const Vector3f& aLookAt, 
 			const Vector3f& aUp, 
 			float aVerticleFoVInDegrees, 
-			float aAspectRatio) 
+			float aAspectRatio,
+			float aAperture,
+			float aFocusDist) 
 		{
-			Vector3f u, v, w;
+			mLensRadius = aAperture / 2.0f;
 
 			float thetaInRadians = aVerticleFoVInDegrees * (float)M_PI / 180.0f;
 			float halfHeight = tan(thetaInRadians / 2.0f);
 			float halfWidth = aAspectRatio * halfHeight;
 
 			mOrigin = aLookFrom;
-			w = unitVector(aLookFrom - aLookAt);
-			u = unitVector(Vector3f::cross(aUp, w));
-			v = Vector3f::cross(w, u);
+			mW = unitVector(aLookFrom - aLookAt);
+			mU = unitVector(Vector3f::cross(aUp, mW));
+			mV = Vector3f::cross(mW, mU);
 
-			mLowerLeftCorner = mOrigin - halfWidth * u - halfHeight * v - w;
+			mLowerLeftCorner = mOrigin - halfWidth * aFocusDist * mU - halfHeight * aFocusDist * mV - mW * aFocusDist;
 
-			mHorizontal = 2.0f * halfWidth * u;
-			mVerticle = 2.0f * halfHeight * v;
+			mHorizontal = 2.0f * halfWidth * aFocusDist *  mU;
+			mVerticle = 2.0f * halfHeight * aFocusDist * mV;
 		}
 
 		Ray ray(float aU, float aV) {
-			return Ray(mOrigin, (mLowerLeftCorner + aU * mHorizontal + aV * mVerticle) - mOrigin);
+			Vector3f randomPoint = mLensRadius * randomInUnitDisk();
+			Vector3f offset = mU * randomPoint.x() + mV * randomPoint.y();
+			return Ray(mOrigin + offset, (mLowerLeftCorner + aU * mHorizontal + aV * mVerticle) - mOrigin - offset);
 		}
 
 	private:
@@ -42,6 +47,8 @@ namespace rt {
 		Vector3f mHorizontal;
 		Vector3f mVerticle;
 		Vector3f mOrigin;
+		Vector3f mU, mV, mW;
+		float mLensRadius;
 	};
 
 }

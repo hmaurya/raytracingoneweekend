@@ -62,4 +62,14 @@ namespace rt
 		r0 = r0 * r0;
 		return  r0 + (1 - r0) * pow((1 - aCosine), 5);
 	}
+
+	Vector3f randomInUnitDisk()
+	{
+		Vector3f point;
+		do {
+			point = 2 * Vector3f(randFloat(), randFloat(), 0) - Vector3f(1.0f, 1.0f, 0.0f);
+		} while (Vector3f::dot(point, point) >= 1.0f);
+
+		return point;
+	}
 }

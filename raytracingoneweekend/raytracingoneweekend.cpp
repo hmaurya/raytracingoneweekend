@@ -93,8 +93,12 @@ void writePPM(const std::string& aFilepath, const int aWidth, const int aHeight,
 		spheres.push_back(new Sphere(Vector3f(-R, 0., -1.), R, new Lambertian(Vector3f(0.f, 0.f, 1.f))));
 		spheres.push_back(new Sphere(Vector3f(R, 0., -1.), R, new Lambertian(Vector3f(1.f, 0.f, 0.f))));*/
 
-		Camera cam(Vector3f(-2, 2, 1), Vector3f(0, 0, -1), Vector3f(0, 1, 0), 
-			90.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight));
+		const Vector3f lookFrom(3.0f, 3.0f, 2.0f);
+		const Vector3f lookAt(0, 0, -1);
+		const float distanceToFocus = (lookFrom - lookAt).length();
+		const float aperture = 2.0f;
+		Camera cam(lookFrom, lookAt, Vector3f(0, 1, 0), 
+			20.0f, static_cast<float>(aWidth) / static_cast<float>(aHeight), aperture, distanceToFocus);
 
 		for (int row = aHeight - 1; row >= 0; --row) {
 			for (int col = 0; col < aWidth; ++col) {
