@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <time.h>
+#include <chrono>
 
 #include "ppm.h"
 #include "vector3.h"
@@ -183,7 +184,12 @@ int main()
 	int numSamplesPerRay = 100;
 	srand((unsigned int)time(0));
 
+	auto start = std::chrono::system_clock::now();
 	writePPM(file, width, height, numSamplesPerRay);
+	auto end = std::chrono::system_clock::now();
+
+	auto time_taken = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+	std::cout << "done tracing in: " << time_taken.count() << std::endl;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
